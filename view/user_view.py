@@ -59,10 +59,15 @@ class CreateFormInput(tk.Toplevel):
         self.email_input = tk.Entry(self)
         self.email_input.pack(pady=5)
 
-        articles_label = tk.Label(self, text="Articles (comma-separated IDs)")
+        articles_label = tk.Label(self, text="Artículos (IDs separados por comas)")
         articles_label.pack(pady=5)
         self.articles_input = tk.Entry(self)
         self.articles_input.pack(pady=5)
+
+        comments_label = tk.Label(self, text="Comentarios (IDs separados por comas)")
+        comments_label.pack(pady=5)
+        self.comments_input = tk.Entry(self)
+        self.comments_input.pack(pady=5)
 
         submit_button = tk.Button(self, text="Crear", width=50, height=3, command=self.submit_user_data)
         submit_button.pack(pady=10)
@@ -71,7 +76,8 @@ class CreateFormInput(tk.Toplevel):
         name = self.name_input.get()
         email = self.email_input.get()
         articles = [article.strip() for article in self.articles_input.get().split(",") if article.strip()]
-        self.controller.create_user(name, email, articles)
+        comments = [comment.strip() for comment in self.comments_input.get().split(",") if comment.strip()]
+        self.controller.create_user(name, email, articles, comments)
 
 class UpdateFormInput(tk.Toplevel):
     def __init__(self, parent, controller):
@@ -101,10 +107,15 @@ class UpdateFormInput(tk.Toplevel):
         self.email_input = tk.Entry(self)
         self.email_input.pack(pady=5)
 
-        articles_label = tk.Label(self, text="Articles (IDs sseparados por coma)")
+        articles_label = tk.Label(self, text="Artículos (IDs separados por comas)")
         articles_label.pack(pady=5)
         self.articles_input = tk.Entry(self)
         self.articles_input.pack(pady=5)
+
+        comments_label = tk.Label(self, text="Comentarios (IDs separados por comas)")
+        comments_label.pack(pady=5)
+        self.comments_input = tk.Entry(self)
+        self.comments_input.pack(pady=5)
 
         submit_button = tk.Button(self, text="Actualizar", width=50, height=3, command=self.submit_user_data)
         submit_button.pack(pady=10)
@@ -114,7 +125,8 @@ class UpdateFormInput(tk.Toplevel):
         name = self.name_input.get()
         email = self.email_input.get()
         articles = [article.strip() for article in self.articles_input.get().split(",") if article.strip()]
-        self.controller.update_user(id, name, email, articles)
+        comments = [comment.strip() for comment in self.comments_input.get().split(",") if comment.strip()]
+        self.controller.update_user(id, name, email, articles, comments)
 
 class ReplaceFormInput(tk.Toplevel):
     def __init__(self, parent, controller):
@@ -144,10 +156,15 @@ class ReplaceFormInput(tk.Toplevel):
         self.email_input = tk.Entry(self)
         self.email_input.pack(pady=5)
 
-        articles_label = tk.Label(self, text="Artículos (IDs sseparados por coma)")
+        articles_label = tk.Label(self, text="Artículos (IDs separados por comas)")
         articles_label.pack(pady=5)
         self.articles_input = tk.Entry(self)
         self.articles_input.pack(pady=5)
+
+        comments_label = tk.Label(self, text="Comentarios (IDs separados por comas)")
+        comments_label.pack(pady=5)
+        self.comments_input = tk.Entry(self)
+        self.comments_input.pack(pady=5)
 
         submit_button = tk.Button(self, text="Remplazar", width=50, height=3, command=self.submit_user_data)
         submit_button.pack(pady=10)
@@ -157,7 +174,8 @@ class ReplaceFormInput(tk.Toplevel):
         name = self.name_input.get()
         email = self.email_input.get()
         articles = [article.strip() for article in self.articles_input.get().split(",") if article.strip()]
-        self.controller.replace_user(id, name, email, articles)
+        comments = [comment.strip() for comment in self.comments_input.get().split(",") if comment.strip()]
+        self.controller.replace_user(id, name, email, articles, comments)
 
 class DeleteFormInput(tk.Toplevel):
     def __init__(self, parent, controller):

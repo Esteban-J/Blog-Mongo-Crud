@@ -6,18 +6,19 @@ class UserModel:
         self.db = MongoClient('mongodb://localhost:27017/')["blog"]
         self.users_collection = self.db["users"]
 
-    def create_user(self, name, email, articles):
+    def create_user(self, name, email, articles, comments):
 
         user_data = {
             "name": name,
             "email": email,
-            "articles": articles
+            "articles": articles,
+            "comments": comments
         }
 
         self.users_collection.insert_one(user_data)
         return True
 
-    def update_user(self, id, name=None, email=None, articles=None):
+    def update_user(self, id, name=None, email=None, articles=None, comments=None):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
     
@@ -29,15 +30,15 @@ class UserModel:
         name = name if name is not "" else user.get("name")
         email = email if email is not "" else user.get("email")
         articles = articles if articles is not "" else user.get("articles")
-
+        comments = comments if comments is not "" else user.get("comments")
     
         self.users_collection.update_one(
             {"_id": id},
-            {"$set": {"name": name, "email": email, "articles": articles}}
+            {"$set": {"name": name, "email": email, "articles": articles, "comments": comments}}
         )
         return True
 
-    def replace_user(self, id, name=None, email=None, articles=None):
+    def replace_user(self, id, name=None, email=None, articles=None, comments=None):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
     
@@ -48,7 +49,7 @@ class UserModel:
     
         self.users_collection.update_one(
             {"_id": id},
-            {"$set": {"name": name, "email": email, "articles": articles}}
+            {"$set": {"name": name, "email": email, "articles": articles, "comments": comments}}
         )
         return True
 

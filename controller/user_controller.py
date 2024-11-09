@@ -8,26 +8,29 @@ class UserController(BaseController):
         self.model = UserModel()
         self.view = UserView(root, self)
     
-    def create_user(self, name, email, articles):
+    def create_user(self, name, email, articles, comments):
         articles = [ObjectId(article) for article in articles if article]
+        comments = [ObjectId(comment) for comment in comments if comment]
         
-        if self.model.create_user(name, email, articles):
+        if self.model.create_user(name, email, articles, comments):
             print("User created successfully with article references!")
         else:
             print("Error: Missing username, email, or articles")
 
-    def update_user(self, id, name, email, articles):
+    def update_user(self, id, name, email, articles, comments):
         articles = [ObjectId(article) for article in articles if article]
+        comments = [ObjectId(comment) for comment in comments if comment]
 
-        if self.model.update_user(id, name, email, articles):
+        if self.model.update_user(id, name, email, articles, comments):
             print("User updated successfully with article references!")
         else:
             print("Error: Missing username, email, or articles")
 
-    def replace_user(self, id, name, email, articles):
+    def replace_user(self, id, name, email, articles, comments):
         articles = [ObjectId(article) for article in articles if article]
+        comments = [ObjectId(comment) for comment in comments if comment]
 
-        if self.model.replace_user(id, name, email, articles):
+        if self.model.replace_user(id, name, email, articles, comments):
             print("User updated successfully with article references!")
         else:
             print("Error: Missing username, email, or articles")
