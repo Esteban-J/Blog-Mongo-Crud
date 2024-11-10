@@ -6,11 +6,12 @@ class ArticleModel:
         self.db = MongoClient('mongodb://localhost:27017/')["blog"]
         self.article_collection = self.db["article"]
 
-    def create_article(self, title, date, user_id, comments):
+    def create_article(self, title, date, text, user_id, comments):
 
         article_data = {
             "title": title,
             "date": date,
+            "text": text,
             "user": user_id,
             "comments": comments
         }
@@ -18,7 +19,7 @@ class ArticleModel:
         self.article_collection.insert_one(article_data)
         return True
 
-    def update_article(self, id, title=None, date=None, user_id=None, comments=None):
+    def update_article(self, id, title=None, date=None, text=None, user_id=None, comments=None):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
     
@@ -29,16 +30,17 @@ class ArticleModel:
         
         title = title if title is not "" else article.get("title")
         date = date if date is not "" else article.get("date")
+        text = text if text is not "" else text.get("text")
         user_id = user_id if user_id is not "" else article.get("user")
         comments = comments if comments is not "" else article.get("comments")
     
         self.article_collection.update_one(
             {"_id": id},
-            {"$set": {"title": title, "date": date, "user": user_id, "comments": comments}}
+            {"$set": {"title": title, "date": date, "text": text, "user": user_id, "comments": comments}}
         )
         return True
 
-    def replace_article(self, id, title=None, date=None, user_id=None, comments=None):
+    def replace_article(self, id, title=None, date=None, text=None, user_id=None, comments=None):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
     
@@ -49,7 +51,7 @@ class ArticleModel:
     
         self.article_collection.update_one(
             {"_id": id},
-            {"$set": {"title": title, "date": date, "user": user_id, "comments": comments}}
+            {"$set": {"title": title, "date": date, "text": text, "user": user_id, "comments": comments}}
         )
         return True
 

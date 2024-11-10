@@ -63,4 +63,5 @@ class UserModel:
         return result.deleted_count > 0
     
     def get_users(self):
-        return self.users_collection.find()
+        return list(self.users_collection.find())
+

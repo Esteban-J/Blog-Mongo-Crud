@@ -40,4 +40,14 @@ class UserController(BaseController):
             print("Usuario Eliminado correctamete")
         else:
             print("Error")
+    
+    def get_users(self):
+        users_list = self.model.get_users()  # This now returns a list
+        if users_list:
+            return users_list
+        else:
+            print("Error: No users found")
+            return []  # Return an empty list if no users are found
+
+
 
