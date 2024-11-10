@@ -6,19 +6,19 @@ class UserModel:
         self.db = MongoClient('mongodb://localhost:27017/')["blog"]
         self.users_collection = self.db["users"]
 
-    def create_user(self, name, email, articles, comments):
+    def create_user(self, name, email, articles_ids, comments_ids):
 
         user_data = {
             "name": name,
             "email": email,
-            "articles": articles,
-            "comments": comments
+            "articles": articles_ids,
+            "comments": comments_ids
         }
 
         self.users_collection.insert_one(user_data)
         return True
 
-    def update_user(self, id, name=None, email=None, articles=None, comments=None):
+    def update_user(self, id, name=None, email=None, articles_ids=None, comments_ids=None):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
     
@@ -29,16 +29,16 @@ class UserModel:
         
         name = name if name is not "" else user.get("name")
         email = email if email is not "" else user.get("email")
-        articles = articles if articles is not "" else user.get("articles")
-        comments = comments if comments is not "" else user.get("comments")
+        articles_ids = articles_ids if articles_ids is not "" else user.get("articles")
+        comments_ids = comments_ids if comments_ids is not "" else user.get("comments")
     
         self.users_collection.update_one(
             {"_id": id},
-            {"$set": {"name": name, "email": email, "articles": articles, "comments": comments}}
+            {"$set": {"name": name, "email": email, "articles": articles_ids, "comments": comments_ids}}
         )
         return True
 
-    def replace_user(self, id, name=None, email=None, articles=None, comments=None):
+    def replace_user(self, id, name=None, email=None, articles_ids=None, comments_ids=None):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
     
@@ -49,7 +49,7 @@ class UserModel:
     
         self.users_collection.update_one(
             {"_id": id},
-            {"$set": {"name": name, "email": email, "articles": articles, "comments": comments}}
+            {"$set": {"name": name, "email": email, "articles": articles_ids, "comments": comments_ids}}
         )
         return True
 

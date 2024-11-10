@@ -34,10 +34,6 @@ class App(tk.Tk):
     
     def clear_window(self):
         self.main_frame.pack_forget()
-        # Only destroy child widgets without repacking main_frame
-        #for widget in self.main_frame.winfo_children():
-            #widget.destroy()
-
 
 if __name__ == "__main__":
     app = App()
