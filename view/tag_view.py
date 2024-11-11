@@ -21,7 +21,7 @@ class TagView:
             ("Actualizar", lambda: self.display_tag_form(2)),
             ("Remplazar", lambda: self.display_tag_form(3)),
             ("Eliminar", lambda: self.display_tag_form(4)),
-            ("Ver lista", lambda: self.display_tag_form(5)),
+            ("Regresar", self.back_to_main),
         ]
 
         for text, command in buttons:
@@ -63,6 +63,11 @@ class TagView:
         submit_button.pack(pady=10)
 
         return name_input, url_input, articles_input
+    
+    def back_to_main(self):
+        self.root.main_frame.pack(fill="both", expand=True)
+        self.view.main_frame.destroy()
+        self.view = BaseView(self.root)
 
 
 class CreateTagForm(tk.Toplevel):

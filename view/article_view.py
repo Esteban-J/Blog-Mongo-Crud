@@ -22,7 +22,7 @@ class ArticleView:
             ("Actualizar", lambda: self.display_article_form(2)),
             ("Remplazar", lambda: self.display_article_form(3)),
             ("Eliminar", lambda: self.display_article_form(4)),
-            ("Ver lista", lambda: self.display_article_form(5)),
+            ("Regresar", self.back_to_main),
         ]
 
         for text, command in buttons:
@@ -84,6 +84,11 @@ class ArticleView:
         submit_button.pack(pady=10)
 
         return title_input, date_input, text_input, user_id_input, comments_ids_input, tags_ids_input, categories_ids_input
+    
+    def back_to_main(self):
+        self.root.main_frame.pack(fill="both", expand=True)
+        self.view.main_frame.destroy()
+        self.view = BaseView(self.root)
 
 
 class CreateInputForm(tk.Toplevel):

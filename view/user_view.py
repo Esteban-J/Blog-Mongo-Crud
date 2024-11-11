@@ -69,8 +69,9 @@ class UserView:
         return name_input, email_input, articles_ids_input, comments_ids_input
 
     def back_to_main(self):
-        self.root.main_frame.pack()
+        self.root.main_frame.pack(fill="both", expand=True)
         self.view.main_frame.destroy()
+        self.view = BaseView(self.root)
     
 
 

@@ -20,7 +20,7 @@ class CategoryView:
             ("Actualizar", lambda: self.display_category_form(2)),
             ("Remplazar", lambda: self.display_category_form(3)),
             ("Eliminar", lambda: self.display_category_form(4)),
-            ("Ver lista", lambda: self.display_category_form(5)),
+            ("Regresar", self.back_to_main),
         ]
         for text, command in buttons:
             button = tk.Button(self.view.main_frame, text=text, width=50, height=3, command=command)
@@ -60,6 +60,11 @@ class CategoryView:
         submit_button = tk.Button(parent, text="Enviar", width=50, height=3, command=submit_command)
         submit_button.pack(pady=10)
         return name_input, url_input, articles_input
+    
+    def back_to_main(self):
+        self.root.main_frame.pack(fill="both", expand=True)
+        self.view.main_frame.destroy()
+        self.view = BaseView(self.root)
 
 
 class CreateCategoryForm(tk.Toplevel):
