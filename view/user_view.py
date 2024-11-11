@@ -21,6 +21,7 @@ class UserView:
             ("Actualizar", lambda: self.display_user_form(2)),
             ("Remplazar", lambda: self.display_user_form(3)),
             ("Eliminar", lambda: self.display_user_form(4)),
+            ("Consultar", lambda: self.display_user_form(5)),
             ("Regresar", self.back_to_main),
             
         ]
@@ -35,9 +36,10 @@ class UserView:
             2: UpdateUserForm,
             3: ReplaceUserForm,
             4: DeleteUserForm,
+            5: ShowUsers
         }
         if num in form_classes:
-            if num == 4:
+            if num == 4 or num == 5:
                 form_classes[num](self.view.main_frame, self.controller)
             else:
                 form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
@@ -201,15 +203,26 @@ class DeleteUserForm(tk.Toplevel):
             messagebox.showerror("Error", f"Un error ha ocurrido: {e}")
 
 
-"""import tkinter as tk
-from tkinter import messagebox
-
 class ShowUsers(tk.Toplevel):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
         self.title("Mostrar usuarios")
         self.geometry("600x400")
+
+        # Search functionality
+        search_frame = tk.Frame(self, bg="lightblue")
+        search_frame.pack(pady=5)
+
+        tk.Label(search_frame, text="User ID:").pack(side="left", padx=5)
+        self.user_id_entry = tk.Entry(search_frame)
+        self.user_id_entry.pack(side="left", padx=5)
+        search_button = tk.Button(search_frame, text="Search", command=self.search_user_by_id)
+        search_button.pack(side="left", padx=5)
+
+        # Refresh button
+        refresh_button = tk.Button(self, text="Refresh", command=self.refresh_data)
+        refresh_button.pack(pady=5)
 
         # Set up scrollable canvas
         self.canvas = tk.Canvas(self)
@@ -233,6 +246,46 @@ class ShowUsers(tk.Toplevel):
         self.total_users = len(self.users)
         self.display_users_page()
 
+
+    def refresh_data(self):
+        """Refresh the user data from the controller and update the display."""
+        # Reset the current page
+        self.current_page = 0
+
+        # Retrieve the updated list of users
+        self.users = self.controller.get_users()
+        self.total_users = len(self.users)
+
+        # Display the updated user list
+        self.display_users_page()
+
+    def search_user_by_id(self):
+        """Search for a user by ID and display the result."""
+        user_id = self.user_id_entry.get().strip()
+        
+        # Clear previous entries in the display frame
+        for widget in self.scrollable_frame.winfo_children():
+            widget.destroy()
+
+        # Find the user with the matching ID
+        user = next((user for user in self.users if str(user['_id']) == user_id), None)
+
+        if user:
+            # Display the found user's information
+            user_text = f"ID de Usuario: {user['_id']}\nNombre: {user['name']}\nEmail: {user['email']}\nArtículos: {user['articles']}\nComentarios: {user['comments']}"
+            user_display = tk.Text(self.scrollable_frame, height=4, wrap="word")
+            user_display.insert("1.0", user_text)
+            user_display.configure(state="disabled")  # Make the text read-only
+            user_display.pack(pady=5)
+        else:
+            # Show message if user not found
+            not_found_label = tk.Label(self.scrollable_frame, text="User not found.", fg="red")
+            not_found_label.pack(pady=5)
+
+        # Update the scroll region
+        self.scrollable_frame.update_idletasks()
+        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+
     def display_users_page(self):
         # Clear the previous widgets (if any)
         for widget in self.scrollable_frame.winfo_children():
@@ -242,11 +295,14 @@ class ShowUsers(tk.Toplevel):
         start_index = self.current_page * self.users_per_page
         end_index = min(start_index + self.users_per_page, self.total_users)
 
-        # Create labels to display users
+        # Create text widgets to display users
         for i in range(start_index, end_index):
             user = self.users[i]
-            user_label = tk.Label(self.scrollable_frame, text=f"User ID: {user['_id']}, Name: {user['name']}, Email: {user['email']}")
-            user_label.pack(pady=5)
+            user_text = f"ID de Usuario: {user['_id']}\nNombre: {user['name']}\nEmail: {user['email']}\nArtículos: {user['articles']}\nComentarios: {user['comments']}"
+            user_display = tk.Text(self.scrollable_frame, height=6, wrap="word")
+            user_display.insert("1.0", user_text)
+            user_display.configure(state="disabled")  # Make the text read-only
+            user_display.pack(pady=5)
 
         # Update the scroll region
         self.scrollable_frame.update_idletasks()
@@ -281,4 +337,5 @@ class ShowUsers(tk.Toplevel):
             self.current_page += 1
             self.display_users_page()
 
- """
+    
+

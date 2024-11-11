@@ -15,11 +15,14 @@ class App(tk.Tk):
         self.main_frame = tk.Frame(self)
         self.main_frame.pack(fill="both", expand=True)
 
+        # Importar los controladores de los diferentes modelos 
         self.user_controller = UserController(self)
         self.article_controller = ArticleController(self)
         self.comment_controller = CommentController(self)
         self.tag_controller = TagController(self)
         self.category_controller = CategoryController(self)
+
+        """ Cada botón llama al método display_"modelo"_crud de la clase corespondiente al modelo   """
 
         welcome_label = tk.Label(self.main_frame, text="Gestor de Base de datos \"Blog\"", font=("Helvetica", 16))
         welcome_label.pack(pady=20)
