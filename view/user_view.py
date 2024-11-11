@@ -217,11 +217,11 @@ class ShowUsers(tk.Toplevel):
         tk.Label(search_frame, text="User ID:").pack(side="left", padx=5)
         self.user_id_entry = tk.Entry(search_frame)
         self.user_id_entry.pack(side="left", padx=5)
-        search_button = tk.Button(search_frame, text="Search", command=self.search_user_by_id)
+        search_button = tk.Button(search_frame, text="Buscar", command=self.search_user_by_id)
         search_button.pack(side="left", padx=5)
 
         # Refresh button
-        refresh_button = tk.Button(self, text="Refresh", command=self.refresh_data)
+        refresh_button = tk.Button(self, text="Refrescar", command=self.refresh_data)
         refresh_button.pack(pady=5)
 
         # Set up scrollable canvas
