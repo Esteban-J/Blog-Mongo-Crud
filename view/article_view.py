@@ -70,10 +70,20 @@ class ArticleView:
         comments_ids_input = tk.Entry(parent)
         comments_ids_input.pack(pady=5)
 
+        tags_ids_label = tk.Label(parent, text="Tags (IDs separados por comas)")
+        tags_ids_label.pack(pady=5)
+        tags_ids_input = tk.Entry(parent)
+        tags_ids_input.pack(pady=5)
+
+        categories_ids_label = tk.Label(parent, text="Categorías (IDs separados por comas)")
+        categories_ids_label.pack(pady=5)
+        categories_ids_input = tk.Entry(parent)
+        categories_ids_input.pack(pady=5)
+
         submit_button = tk.Button(parent, text="Enviar", width=50, height=3, command=submit_command)
         submit_button.pack(pady=10)
 
-        return title_input, date_input, text_input, user_id_input, comments_ids_input
+        return title_input, date_input, text_input, user_id_input, comments_ids_input, tags_ids_input, categories_ids_input
 
 
 class CreateInputForm(tk.Toplevel):
@@ -81,12 +91,12 @@ class CreateInputForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Crear Artículo")
-        self.geometry("600x400")
+        self.geometry("600x600")
 
         window_msg = tk.Label(self, text="Ingrese los datos del artículo", font=("Helvetica", 16))
         window_msg.pack(pady=10)
 
-        self.title_input, self.date_input, self.text_input, self.user_id_input, self.comments_ids_input = populate_common_widgets(self, self.submit_article_data)
+        self.title_input, self.date_input, self.text_input, self.user_id_input, self.comments_ids_input, self.tags_ids_input, self.categories_ids_input = populate_common_widgets(self, self.submit_article_data)
 
     def submit_article_data(self):
         try:
@@ -95,7 +105,9 @@ class CreateInputForm(tk.Toplevel):
             text = self.text_input.get().strip()
             user_id = self.user_id_input.get().strip() 
             comments_ids = [comment.strip() for comment in self.comments_ids_input.get().split(",") if comment.strip()]
-            self.controller.create_article(title, date, text, user_id, comments_ids)
+            tags_ids = [tag.strip() for tag in self.tags_ids_input.get().split(",") if tag.strip()]
+            categories_ids = [category.strip() for category in self.categories_ids_input.get().split(",") if category.strip()]
+            self.controller.create_article(title, date, text, user_id, comments_ids, tags_ids, categories_ids)
             messagebox.showinfo("Exito", "Artículo creado correctamente!")
         except InvalidId as e:
             messagebox.showerror("Error", "Id invalido: El id debe de ser un ObjectId")
@@ -108,7 +120,7 @@ class UpdateInputForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Actualizar datos de artículo")
-        self.geometry("600x600")
+        self.geometry("600x700")
 
         window_msg1 = tk.Label(self, text="Ingrese el ID del artículo a actualizar", font=("Helvetica", 16))
         window_msg1.pack(pady=10)
@@ -121,7 +133,7 @@ class UpdateInputForm(tk.Toplevel):
         window_msg2 = tk.Label(self, text="Ingrese los nuevos datos del artículo", font=("Helvetica", 16))
         window_msg2.pack(pady=10)
 
-        self.title_input, self.date_input, self.text_input, self.user_id_input, self.comments_ids_input = populate_common_widgets(self, self.submit_article_data)
+        self.title_input, self.date_input, self.text_input, self.user_id_input, self.comments_ids_input, self.tags_ids_input, self.categories_ids_input = populate_common_widgets(self, self.submit_article_data)
 
     def submit_article_data(self):
         try:
@@ -129,9 +141,11 @@ class UpdateInputForm(tk.Toplevel):
             title = self.title_input.get().strip()
             date = self.date_input.get().strip()
             text = self.text_input.get().strip()
-            user_id = self.user_id_input.get().strip()
+            user_id = self.user_id_input.get().strip() 
             comments_ids = [comment.strip() for comment in self.comments_ids_input.get().split(",") if comment.strip()]
-            self.controller.update_article(id, title, date, text, user_id, comments_ids)
+            tags_ids = [tag.strip() for tag in self.tags_ids_input.get().split(",") if tag.strip()]
+            categories_ids = [category.strip() for category in self.categories_ids_input.get().split(",") if category.strip()]
+            self.controller.update_article(id, title, date, text, user_id, comments_ids, tags_ids, categories_ids)
             messagebox.showinfo("Exito", "Artículo actualizado correctamente!")
         except InvalidId as e:
             messagebox.showerror("Error", "Id invalido: El id debe de ser un ObjectId")
@@ -144,7 +158,7 @@ class ReplaceInputForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Remplazar datos de artículo")
-        self.geometry("600x600")
+        self.geometry("600x700")
 
         window_msg1 = tk.Label(self, text="Ingrese el ID del artículo a Remplazar", font=("Helvetica", 16))
         window_msg1.pack(pady=10)
@@ -157,7 +171,7 @@ class ReplaceInputForm(tk.Toplevel):
         window_msg2 = tk.Label(self, text="Ingrese los nuevos datos del artículo", font=("Helvetica", 16))
         window_msg2.pack(pady=10)
 
-        self.title_input, self.date_input, self.text_input, self.user_id_input, self.comments_ids_input = populate_common_widgets(self, self.submit_article_data)
+        self.title_input, self.date_input, self.text_input, self.user_id_input, self.comments_ids_input, self.tags_ids_input, self.categories_ids_input = populate_common_widgets(self, self.submit_article_data)
 
     def submit_article_data(self):
         try:
@@ -165,9 +179,11 @@ class ReplaceInputForm(tk.Toplevel):
             title = self.title_input.get().strip()
             date = self.date_input.get().strip()
             text = self.text_input.get().strip()
-            user_id = self.user_id_input.get().strip()
-            comments = [comment.strip() for comment in self.comments_ids_input.get().split(",") if comment.strip()]
-            self.controller.replace_article(id_input, title, date, text, user_id, comments)
+            user_id = self.user_id_input.get().strip() 
+            comments_ids = [comment.strip() for comment in self.comments_ids_input.get().split(",") if comment.strip()]
+            tags_ids = [tag.strip() for tag in self.tags_ids_input.get().split(",") if tag.strip()]
+            categories_ids = [category.strip() for category in self.categories_ids_input.get().split(",") if category.strip()]
+            self.controller.replace_article(id_input, title, date, text, user_id, comments_ids, tags_ids, categories_ids)
             messagebox.showinfo("Exito", "Artículo reemplazado correctamente!")
         except InvalidId as e:
             messagebox.showerror("Error", "Id invalido: El id debe de ser un ObjectId")
