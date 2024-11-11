@@ -6,16 +6,17 @@ class TagModel:
         self.db = MongoClient('mongodb://localhost:27017/')["blog"]
         self.tag_collection = self.db["tag"]
 
-    def create_tag(self, name, articles):
+    def create_tag(self, name, url, articles):
         tag_data = {
             "name": name,
+            "url": url,
             "articles": articles
         }
         
         self.tag_collection.insert_one(tag_data)
         return True
 
-    def update_tag(self, id, name=None, articles=None):
+    def update_tag(self, id, name, url, articles):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
 
@@ -23,18 +24,17 @@ class TagModel:
         if not tag:
             return False
 
-        update_data = {}
-        if name is not None:
-            update_data["name"] = name
-        if articles is not None:
-            update_data["articles"] = articles
+        name = name if name else tag.get("name")
+        url = url if url else tag.get("email")
+        articles_ids = articles_ids if articles_ids else tag.get("articles", [])
 
-        if update_data:
-            self.tag_collection.update_one({"_id": id}, {"$set": update_data})
-            return True
-        return False
+        self.tag_collection.update_one(
+            {"_id": id},
+            {"$set": {"name": name, "url": url, "articles": articles_ids}}
+        )
+        return True
 
-    def replace_tag(self, id, name, articles):
+    def replace_tag(self, id, name, url, articles):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
 
@@ -44,6 +44,7 @@ class TagModel:
 
         tag_data = {
             "name": name,
+            "url": url,
             "articles": articles
         }
 

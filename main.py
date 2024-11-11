@@ -3,6 +3,7 @@ from controller.user_controller import UserController
 from controller.article_controller import ArticleController
 from controller.comment_controller import CommentController
 from controller.tag_controller import TagController
+from controller.category_controller import CategoryController
 
 
 class App(tk.Tk):
@@ -18,6 +19,7 @@ class App(tk.Tk):
         self.article_controller = ArticleController(self)
         self.comment_controller = CommentController(self)
         self.tag_controller = TagController(self)
+        self.category_controller = CategoryController(self)
 
         welcome_label = tk.Label(self.main_frame, text="Gestor de Base de datos \"Blog\"", font=("Helvetica", 16))
         welcome_label.pack(pady=20)
@@ -34,7 +36,7 @@ class App(tk.Tk):
         articles_button = tk.Button(self.main_frame, text="Tags", width=50, height=3, command=self.tag_controller.view.display_tag_crud)
         articles_button.pack(pady=10)
 
-        articles_button = tk.Button(self.main_frame, text="Artículos", width=50, height=3, command=self.article_controller.view.display_article_crud)
+        articles_button = tk.Button(self.main_frame, text="Categoría", width=50, height=3, command=self.category_controller.view.display_category_crud)
         articles_button.pack(pady=10)
 
 if __name__ == "__main__":

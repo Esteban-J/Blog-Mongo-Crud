@@ -10,26 +10,26 @@ class TagController(BaseController):
         self.model = TagModel()
         self.view = TagView(root, self)
 
-    def create_tag(self, name, articles):
+    def create_tag(self, name, url, articles):
         articles = [ObjectId(article) for article in articles if article]
 
-        if self.model.create_tag(name, articles):
+        if self.model.create_tag(name, url, articles):
             print("Tag created successfully with article references!")
         else:
             print("Error: Missing required fields for tag creation")
 
-    def update_tag(self, id, name, articles):
+    def update_tag(self, id, name, url, articles):
         articles = [ObjectId(article) for article in articles if article]
 
-        if self.model.update_tag(id, name, articles):
+        if self.model.update_tag(id, name, url, articles):
             print("Tag updated successfully with article references!")
         else:
             print("Error: Failed to update tag or tag not found")
 
-    def replace_tag(self, id, name, articles):
+    def replace_tag(self, id, name, url, articles):
         articles = [ObjectId(article) for article in articles if article]
 
-        if self.model.replace_tag(id, name, articles):
+        if self.model.replace_tag(id, name, url, articles):
             print("Tag replaced successfully with article references!")
         else:
             print("Error: Failed to replace tag or tag not found")

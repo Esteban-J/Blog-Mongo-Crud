@@ -27,10 +27,10 @@ class UserModel:
         if not user:
             return False
         
-        name = name if name is not "" else user.get("name")
-        email = email if email is not "" else user.get("email")
-        articles_ids = articles_ids if articles_ids is not "" else user.get("articles")
-        comments_ids = comments_ids if comments_ids is not "" else user.get("comments")
+        name = name if name else user.get("name")
+        email = email if email else user.get("email")
+        articles_ids = articles_ids if articles_ids else user.get("articles", [])
+        comments_ids = comments_ids if comments_ids else user.get("comments", [])
     
         self.users_collection.update_one(
             {"_id": id},

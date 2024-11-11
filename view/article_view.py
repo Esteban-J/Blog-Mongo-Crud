@@ -36,8 +36,13 @@ class ArticleView:
             3: ReplaceInputForm,
             4: DeleteInputForm,
         }
+        
         if num in form_classes:
-            form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
+            if num == 4:
+                form_classes[num](self.view.main_frame, self.controller)
+            else:
+                form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
+
 
     def populate_common_widgets(self, parent, submit_command):
         title_label = tk.Label(parent, text="Título")
@@ -50,7 +55,7 @@ class ArticleView:
         date_input = DateEntry(parent, width=12, background='darkblue', foreground='white', borderwidth=2, date_pattern="yyyy-mm-dd")
         date_input.pack(pady=5)
 
-        text_label = tk.Label(parent, text="Txto (IDs separados por comas)")
+        text_label = tk.Label(parent, text="Texto")
         text_label.pack(pady=5)
         text_input = tk.Entry(parent)
         text_input.pack(pady=5)
@@ -76,7 +81,7 @@ class CreateInputForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Crear Artículo")
-        self.geometry("600x600")
+        self.geometry("600x400")
 
         window_msg = tk.Label(self, text="Ingrese los datos del artículo", font=("Helvetica", 16))
         window_msg.pack(pady=10)
@@ -189,5 +194,11 @@ class DeleteInputForm(tk.Toplevel):
         self.submit_button.pack(pady=10)
 
     def submit_article_data(self):
-        id = self.id_input.get()
-        self.controller.delete_article(id)
+        try:
+            id = self.id_input.get()
+            self.controller.delete_article(id)
+            messagebox.showinfo("Exito", "Artículo eliminado correctamente!")
+        except InvalidId as e:
+            messagebox.showerror("Error", "Id invalido: El id debe de ser un ObjectId")
+        except Exception as e:
+            messagebox.showerror("Error", f"Un error ha ocurrido: {e}")

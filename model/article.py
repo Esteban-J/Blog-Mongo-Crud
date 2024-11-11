@@ -19,7 +19,7 @@ class ArticleModel:
         self.article_collection.insert_one(article_data)
         return True
 
-    def update_article(self, id, title=None, date=None, text=None, user_id=None, comments=None):
+    def update_article(self, id, title, date, text, user_id, comments):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
     
@@ -28,11 +28,11 @@ class ArticleModel:
         if not article:
             return False
         
-        title = title if title is not "" else article.get("title")
-        date = date if date is not "" else article.get("date")
-        text = text if text is not "" else text.get("text")
-        user_id = user_id if user_id is not "" else article.get("user")
-        comments = comments if comments is not "" else article.get("comments")
+        title = title if title else article.get("title")
+        date = date if date else article.get("date")
+        text = text if text else article.get("text")
+        user_id = user_id if user_id else article.get("user")
+        comments = comments if comments else article.get("comments", [])
     
         self.article_collection.update_one(
             {"_id": id},

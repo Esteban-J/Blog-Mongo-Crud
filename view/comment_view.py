@@ -35,8 +35,13 @@ class CommentView:
             3: ReplaceCommentForm,
             4: DeleteCommentForm,
         }
+        
         if num in form_classes:
-            form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
+            if num == 4:
+                form_classes[num](self.view.main_frame, self.controller)
+            else:
+                form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
+
 
     def populate_common_widgets(self, parent, submit_command):
         name_label = tk.Label(parent, text="Nombre")
@@ -70,7 +75,7 @@ class CreateCommentForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Crear Comentario")
-        self.geometry("600x600")
+        self.geometry("600x400")
 
         window_msg = tk.Label(self, text="Ingrese los datos del Comentario", font=("Helvetica", 16))
         window_msg.pack(pady=10)
@@ -96,7 +101,7 @@ class UpdateCommentForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Actualizar datos de Comentario")
-        self.geometry("600x600")
+        self.geometry("600x500")
 
         window_msg1 = tk.Label(self, text="Ingrese el ID del comentario a actualizar", font=("Helvetica", 16))
         window_msg1.pack(pady=10)
@@ -131,7 +136,7 @@ class ReplaceCommentForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Remplazar datos de comentario")
-        self.geometry("600x600")
+        self.geometry("600x500")
 
         window_msg1 = tk.Label(self, text="Ingrese el ID del comentario a reemplazar", font=("Helvetica", 16))
         window_msg1.pack(pady=10)
@@ -180,6 +185,12 @@ class DeleteCommentForm(tk.Toplevel):
         submit_button.pack(pady=10)
 
     def submit_comment_data(self):
-        comment_id = self.id_input.get().strip()
-        self.controller.delete_comment(comment_id)
-        messagebox.showinfo("Exito", "Comentario eliminado correctamente!")
+        try:
+            comment_id = self.id_input.get().strip()
+            self.controller.delete_comment(comment_id)
+            messagebox.showinfo("Exito", "Comentario eliminado correctamente!")
+        except InvalidId:
+            messagebox.showerror("Error", "ID inválido: Debe de ser un ObjectId")
+        except Exception as e:
+            messagebox.showerror("Error", f"Un error ha ocurrido: {e}")
+

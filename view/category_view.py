@@ -33,8 +33,13 @@ class CategoryView:
             3: ReplaceCategoryForm,
             4: DeleteCategoryForm,
         }
+        
         if num in form_classes:
-            form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
+            if num == 4:
+                form_classes[num](self.view.main_frame, self.controller)
+            else:
+                form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
+
 
     def populate_common_widgets(self, parent, submit_command):
         name_label = tk.Label(parent, text="Nombre de la Categoría")
@@ -62,7 +67,7 @@ class CreateCategoryForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Crear Categoría")
-        self.geometry("400x400")
+        self.geometry("600x300")
 
         window_msg = tk.Label(self, text="Ingrese los datos de la categoría", font=("Helvetica", 16))
         window_msg.pack(pady=10)
@@ -70,18 +75,25 @@ class CreateCategoryForm(tk.Toplevel):
         self.name_input, self.url_input, self.articles_input = populate_common_widgets(self, self.submit_category_data)
 
     def submit_category_data(self):
-        name = self.name_input.get().strip()
-        url = self.url_input.get().strip()
-        articles = [article.strip() for article in self.articles_input.get().split(",") if article.strip()]
-        self.controller.create_category(name, url, articles)
+        try:
+            name = self.name_input.get().strip()
+            url = self.url_input.get().strip()
+            articles = [article.strip() for article in self.articles_input.get().split(",") if article.strip()]
+            self.controller.create_category(name, url, articles)
+            messagebox.showinfo("Exito", "Categoría creado correctamente!")
+        except InvalidId:
+            messagebox.showerror("Error", "ID inválido: Debe de ser un ObjectId")
+        except Exception as e:
+            messagebox.showerror("Error", f"Un error ha ocurrido: {e}")
+
 
 
 class UpdateCategoryForm(tk.Toplevel):
     def __init__(self, parent, controller, populate_common_widgets):
         super().__init__(parent)
         self.controller = controller
-        self.title("Actualizar Categoría")
-        self.geometry("400x400")
+        self.title("Actualizar datos de categoría")
+        self.geometry("600x500")
 
         window_msg1 = tk.Label(self, text="Ingrese el ID de la categoría a actualizar", font=("Helvetica", 16))
         window_msg1.pack(pady=10)
@@ -103,7 +115,7 @@ class UpdateCategoryForm(tk.Toplevel):
             url = self.url_input.get().strip()
             articles = [article.strip() for article in self.articles_input.get().split(",") if article.strip()]
             self.controller.update_category(id, name, url, articles)
-            messagebox.showinfo("Exito", "Categoría creada correctamente!")
+            messagebox.showinfo("Exito", "Categoría actualizada correctamente!")
         except InvalidId:
             messagebox.showerror("Error", "ID inválido: Debe ser un ObjectId")
         except Exception as e:
@@ -114,8 +126,8 @@ class ReplaceCategoryForm(tk.Toplevel):
     def __init__(self, parent, controller, populate_common_widgets):
         super().__init__(parent)
         self.controller = controller
-        self.title("Reemplazar Categoría")
-        self.geometry("400x400")
+        self.title("Reemplazar datos de categoría")
+        self.geometry("600x500")
 
         window_msg1 = tk.Label(self, text="Ingrese el ID de la categoría a reemplazar", font=("Helvetica", 16))
         window_msg1.pack(pady=10)
@@ -137,7 +149,7 @@ class ReplaceCategoryForm(tk.Toplevel):
             url = self.url_input.get().strip()
             articles = [article.strip() for article in self.articles_input.get().split(",") if article.strip()]
             self.controller.replace_category(id, name, url, articles)
-            messagebox.showinfo("Exito", "Categoría creada correctamente!")
+            messagebox.showinfo("Exito", "Categoría remplazada correctamente!")
         except InvalidId:
             messagebox.showerror("Error", "ID inválido: Debe ser un ObjectId")
         except Exception as e:
@@ -149,7 +161,7 @@ class DeleteCategoryForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Eliminar Categoría")
-        self.geometry("300x200")
+        self.geometry("600x200")
 
         window_msg = tk.Label(self, text="Ingrese el ID de la categoría a eliminar", font=("Helvetica", 16))
         window_msg.pack(pady=10)
@@ -163,5 +175,12 @@ class DeleteCategoryForm(tk.Toplevel):
         submit_button.pack(pady=10)
 
     def submit_category_data(self):
-        id = self.id_input.get().strip()
-        self.controller.delete_category(id)
+        try:
+            id = self.id_input.get().strip()
+            self.controller.delete_category(id)
+            messagebox.showinfo("Exito", "Comentario eliminado correctamente!")
+        except InvalidId:
+            messagebox.showerror("Error", "ID inválido: Debe de ser un ObjectId")
+        except Exception as e:
+            messagebox.showerror("Error", f"Un error ha ocurrido: {e}")
+

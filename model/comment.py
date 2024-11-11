@@ -17,7 +17,7 @@ class CommentModel:
         self.comment_collection.insert_one(comment_data)
         return True
 
-    def update_comment(self, id, name=None, url=None, articles=None, user_id=None):
+    def update_comment(self, id, name, url, articles, user_id):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
         
@@ -26,10 +26,10 @@ class CommentModel:
         if not comment:
             return False
         
-        name = name if name != "" else comment.get("name")
-        url = url if url != "" else comment.get("url")
-        articles = articles if articles != "" else comment.get("articles")
-        user_id = user_id if user_id != "" else comment.get("user")
+        name = name if name else comment.get("name")
+        url = url if url else comment.get("url")
+        articles = articles if articles else comment.get("articles", [])
+        user_id = user_id if user_id else comment.get("user", [])
 
         self.comment_collection.update_one(
             {"_id": id},
@@ -37,7 +37,7 @@ class CommentModel:
         )
         return True
 
-    def replace_comment(self, id, name=None, url=None, articles=None, user_id=None):
+    def replace_comment(self, id, name, url, articles, user_id):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
         

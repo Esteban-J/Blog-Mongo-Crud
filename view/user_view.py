@@ -37,7 +37,10 @@ class UserView:
             4: DeleteUserForm,
         }
         if num in form_classes:
-            form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
+            if num == 4:
+                form_classes[num](self.view.main_frame, self.controller)
+            else:
+                form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
 
     def populate_common_widgets(self, parent, submit_command):
         name_label = tk.Label(parent, text="Nombre")
@@ -77,7 +80,7 @@ class CreateUserForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Crear Usuario")
-        self.geometry("600x600")
+        self.geometry("600x400")
 
         window_msg = tk.Label(self, text="Ingrese los datos del usuario", font=("Helvetica", 16))
         window_msg.pack(pady=10)
@@ -103,7 +106,7 @@ class UpdateUserForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Actualizar datos de usuario")
-        self.geometry("600x600")
+        self.geometry("600x500")
 
         window_msg1 = tk.Label(self, text="Ingrese el ID del usuario a actualizar", font=("Helvetica", 16))
         window_msg1.pack(pady=10)
@@ -138,7 +141,7 @@ class ReplaceUserForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Remplazar datos de usuario")
-        self.geometry("600x600")
+        self.geometry("600x500")
 
         window_msg1 = tk.Label(self, text="Ingrese el ID del usuario a remplazar", font=("Helvetica", 16))
         window_msg1.pack(pady=10)
@@ -187,9 +190,14 @@ class DeleteUserForm(tk.Toplevel):
         submit_button.pack(pady=10)
 
     def submit_user_data(self):
-        user_id = self.id_input.get().strip()
-        self.controller.delete_user(user_id)
-        messagebox.showinfo("Exito", "Usuario eliminado correctamente!")
+        try:
+            user_id = self.id_input.get().strip()
+            self.controller.delete_user(user_id)
+            messagebox.showinfo("Exito", "Usuario eliminado correctamente!")
+        except InvalidId as e:
+            messagebox.showerror("Error", "Id invalido: El id debe de ser un ObjectId")
+        except Exception as e:
+            messagebox.showerror("Error", f"Un error ha ocurrido: {e}")
 
 
 """import tkinter as tk

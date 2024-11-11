@@ -17,11 +17,11 @@ class TagView:
         label.pack(pady=20)
 
         buttons = [
-            ("Create", lambda: self.display_tag_form(1)),
-            ("Update", lambda: self.display_tag_form(2)),
-            ("Replace", lambda: self.display_tag_form(3)),
-            ("Delete", lambda: self.display_tag_form(4)),
-            ("View List", lambda: self.display_tag_form(5)),
+            ("Crear", lambda: self.display_tag_form(1)),
+            ("Actualizar", lambda: self.display_tag_form(2)),
+            ("Remplazar", lambda: self.display_tag_form(3)),
+            ("Eliminar", lambda: self.display_tag_form(4)),
+            ("Ver lista", lambda: self.display_tag_form(5)),
         ]
 
         for text, command in buttons:
@@ -35,14 +35,24 @@ class TagView:
             3: ReplaceTagForm,
             4: DeleteTagForm,
         }
+        
         if num in form_classes:
-            form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
+            if num == 4:
+                form_classes[num](self.view.main_frame, self.controller)
+            else:
+                form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
+
 
     def populate_common_widgets(self, parent, submit_command):
         name_label = tk.Label(parent, text="Nombre")
         name_label.pack(pady=5)
         name_input = tk.Entry(parent)
         name_input.pack(pady=5)
+
+        url_label = tk.Label(parent, text="Url")
+        url_label.pack(pady=5)
+        url_input = tk.Entry(parent)
+        url_input.pack(pady=5)
 
         articles_label = tk.Label(parent, text="Artículos (IDs separados por comas)")
         articles_label.pack(pady=5)
@@ -52,33 +62,40 @@ class TagView:
         submit_button = tk.Button(parent, text="Enviar", width=50, height=3, command=submit_command)
         submit_button.pack(pady=10)
 
-        return name_input, articles_input
+        return name_input, url_input, articles_input
 
 
 class CreateTagForm(tk.Toplevel):
     def __init__(self, parent, controller, populate_common_widgets):
         super().__init__(parent)
         self.controller = controller
-        self.title("Create Tag")
-        self.geometry("400x400")
+        self.title("Crear Tag")
+        self.geometry("600x300")
 
         window_msg = tk.Label(self, text="Ingrese los datos del tag", font=("Helvetica", 16))
         window_msg.pack(pady=10)
 
-        self.name_input, self.articles_input = populate_common_widgets(self, self.submit_tag_data)
+        self.name_input, self.url_input, self.articles_input = populate_common_widgets(self, self.submit_tag_data)
 
     def submit_tag_data(self):
-        name = self.name_input.get().strip()
-        articles = [article.strip() for article in self.articles_input.get().split(",") if article.strip()]
-        self.controller.create_tag(name, articles)
+        try:
+            name = self.name_input.get().strip()
+            url = self.url_input.get().strip()
+            articles = [article.strip() for article in self.articles_input.get().split(",") if article.strip()]
+            self.controller.create_tag(name, url, articles)
+            messagebox.showinfo("Exito", "Tag creado correctamente!")
+        except InvalidId:
+            messagebox.showerror("Error", "ID inválido: Debe de ser un ObjectId")
+        except Exception as e:
+            messagebox.showerror("Error", f"Un error ha ocurrido: {e}")
 
 
 class UpdateTagForm(tk.Toplevel):
     def __init__(self, parent, controller, populate_common_widgets):
         super().__init__(parent)
         self.controller = controller
-        self.title("Actualizar Tag")
-        self.geometry("400x400")
+        self.title("Actualizar datos de Tag")
+        self.geometry("600x500")
 
         window_msg1 = tk.Label(self, text="Ingrese el ID del tag a actualizar ", font=("Helvetica", 16))
         window_msg1.pack(pady=10)
@@ -91,14 +108,15 @@ class UpdateTagForm(tk.Toplevel):
         window_msg2 = tk.Label(self, text="Ingrese los datos del nuevo tag", font=("Helvetica", 16))
         window_msg2.pack(pady=10)
 
-        self.name_input, self.articles_input = populate_common_widgets(self, self.submit_tag_data)
+        self.name_input, self.url_input, self.articles_input = populate_common_widgets(self, self.submit_tag_data)
 
     def submit_tag_data(self):
         try:
             id = self.id_input.get().strip()
             name = self.name_input.get().strip()
+            url = self.url_input.get().strip()
             articles = [article.strip() for article in self.articles_input.get().split(",") if article.strip()]
-            self.controller.update_tag(id, name, articles)
+            self.controller.update_tag(id, name, url, articles)
             messagebox.showinfo("Exito", "Tag actualizado correctamente!")
         except InvalidId:
             messagebox.showerror("Error", "ID inválido: Debe de ser un ObjectId")
@@ -110,8 +128,8 @@ class ReplaceTagForm(tk.Toplevel):
     def __init__(self, parent, controller, populate_common_widgets):
         super().__init__(parent)
         self.controller = controller
-        self.title("Replace Tag")
-        self.geometry("400x400")
+        self.title("Remplazar datos de Tag")
+        self.geometry("600x500")
 
         window_msg1 = tk.Label(self, text="Ingrese el ID del tag a remplazar", font=("Helvetica", 16))
         window_msg1.pack(pady=10)
@@ -124,14 +142,15 @@ class ReplaceTagForm(tk.Toplevel):
         window_msg2 = tk.Label(self, text="Ingrese los daos del nuevo Tag", font=("Helvetica", 16))
         window_msg2.pack(pady=10)
 
-        self.name_input, self.articles_input = populate_common_widgets(self, self.submit_tag_data)
+        self.name_input, self.url_input, self.articles_input = populate_common_widgets(self, self.submit_tag_data)
 
     def submit_tag_data(self):
         try:
             id = self.id_input.get().strip()
             name = self.name_input.get().strip()
+            url = self.url_input.get().strip()
             articles = [article.strip() for article in self.articles_input.get().split(",") if article.strip()]
-            self.controller.replace_tag(id, name, articles)
+            self.controller.replace_tag(id, name, url, articles)
             messagebox.showinfo("Exito", "Tag remplazado correctamente!")
         except InvalidId:
             messagebox.showerror("Error", "ID inválido: Debe de ser un ObjectId")
@@ -144,7 +163,7 @@ class DeleteTagForm(tk.Toplevel):
         super().__init__(parent)
         self.controller = controller
         self.title("Eliminar Tag")
-        self.geometry("300x200")
+        self.geometry("600x200")
 
         window_msg = tk.Label(self, text="Ingrese el ID del tag a eliminar", font=("Helvetica", 16))
         window_msg.pack(pady=10)
@@ -158,6 +177,11 @@ class DeleteTagForm(tk.Toplevel):
         submit_button.pack(pady=10)
 
     def submit_tag_data(self):
-        id = self.id_input.get().strip()
-        self.controller.delete_tag(id)
-        messagebox.showinfo("Exito", "Tag eliminado correctamente!")
+        try:
+            id = self.id_input.get().strip()
+            self.controller.delete_tag(id)
+            messagebox.showinfo("Exito", "Tag eliminado correctamente!")
+        except InvalidId:
+            messagebox.showerror("Error", "ID inválido: Debe de ser un ObjectId")
+        except Exception as e:
+            messagebox.showerror("Error", f"Un error ha ocurrido: {e}")

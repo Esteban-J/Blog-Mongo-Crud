@@ -22,11 +22,11 @@ class CategoryModel:
         if not category:
             return False
         update_data = {}
-        if name is not None:
+        if name:
             update_data["name"] = name
-        if url is not None:
+        if url:
             update_data["url"] = url
-        if articles is not None:
+        if articles:
             update_data["articles"] = articles
         if update_data:
             self.category_collection.update_one({"_id": id}, {"$set": update_data})
