@@ -21,6 +21,7 @@ class TagView:
             ("Actualizar", lambda: self.display_tag_form(2)),
             ("Remplazar", lambda: self.display_tag_form(3)),
             ("Eliminar", lambda: self.display_tag_form(4)),
+            ("Consultar", lambda: self.display_tag_form(5)),
             ("Regresar", self.back_to_main),
         ]
 
@@ -34,10 +35,11 @@ class TagView:
             2: UpdateTagForm,
             3: ReplaceTagForm,
             4: DeleteTagForm,
+            5: ShowTags
         }
         
         if num in form_classes:
-            if num == 4:
+            if num == 4 or num == 5:
                 form_classes[num](self.view.main_frame, self.controller)
             else:
                 form_classes[num](self.view.main_frame, self.controller, self.populate_common_widgets)
@@ -190,3 +192,111 @@ class DeleteTagForm(tk.Toplevel):
             messagebox.showerror("Error", "ID inválido: Debe de ser un ObjectId")
         except Exception as e:
             messagebox.showerror("Error", f"Un error ha ocurrido: {e}")
+
+class ShowTags(tk.Toplevel):
+    def __init__(self, parent, controller):
+        super().__init__(parent)
+        self.controller = controller
+        self.title("Mostrar Tags")
+        self.geometry("600x400")
+
+        search_frame = tk.Frame(self)
+        search_frame.pack(pady=5)
+
+        tk.Label(search_frame, text="ID del Tag:").pack(side="left", padx=5)
+        self.tag_id_entry = tk.Entry(search_frame)
+        self.tag_id_entry.pack(side="left", padx=5)
+        search_button = tk.Button(search_frame, text="Buscar", command=self.search_tag_by_id)
+        search_button.pack(side="left", padx=5)
+
+        refresh_button = tk.Button(self, text="Refrescar", command=self.refresh_data)
+        refresh_button.pack(pady=5)
+
+        self.canvas = tk.Canvas(self)
+        self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+        self.scrollable_frame = tk.Frame(self.canvas)
+        
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.scrollbar.pack(side="right", fill="y")
+        self.canvas.pack(side="top", fill="both", expand=True)
+
+        self.pagination_frame = tk.Frame(self)
+        self.pagination_frame.pack(pady=5)
+
+        self.tags_per_page = 5 
+        self.current_page = 0
+
+        self.tags = self.controller.get_tags()
+        self.total_tags = len(self.tags)
+        self.display_tags_page()
+
+    def refresh_data(self):
+        self.current_page = 0
+        self.tags = self.controller.get_tags()
+        self.total_tags = len(self.tags)
+        self.display_tags_page()
+
+    def search_tag_by_id(self):
+        tag_id = self.tag_id_entry.get().strip()
+
+        for widget in self.scrollable_frame.winfo_children():
+            widget.destroy()
+
+        tag = next((tag for tag in self.tags if str(tag['_id']) == tag_id), None)
+
+        if tag:
+            tag_text = f"ID del Tag: {tag['_id']}\nNombre: {tag['name']}\nurl: {tag['url']}\nArtículos: {tag['articles']}"
+            tag_display = tk.Text(self.scrollable_frame, height=4, wrap="word")
+            tag_display.insert("1.0", tag_text)
+            tag_display.configure(state="disabled")
+            tag_display.pack(pady=5)
+        else:
+            self.display_tags_page()
+            messagebox.showerror("Error", "Tag no encontrado")
+
+        self.scrollable_frame.update_idletasks()
+        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+
+    def display_tags_page(self):
+        for widget in self.scrollable_frame.winfo_children():
+            widget.destroy()
+
+        start_index = self.current_page * self.tags_per_page
+        end_index = min(start_index + self.tags_per_page, self.total_tags)
+
+        for i in range(start_index, end_index):
+            tag = self.tags[i]
+            tag_text = f"ID de Usuario: {tag['_id']}\nNombre: {tag['name']}\nurl: {tag['url']}\nArtículos: {tag['articles']}"
+            tag_display = tk.Text(self.scrollable_frame, height=6, wrap="word")
+            tag_display.insert("1.0", tag_text)
+            tag_display.configure(state="disabled")
+            tag_display.pack(pady=5, fill="both", expand=True)
+
+        self.scrollable_frame.update_idletasks()
+        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+
+        self.create_pagination_buttons()
+
+    def create_pagination_buttons(self):
+        for widget in self.pagination_frame.winfo_children():
+            widget.destroy()
+
+        if self.current_page > 0:
+            prev_button = tk.Button(self.pagination_frame, text="Previous", command=self.prev_page)
+            prev_button.pack(side="left", padx=10)
+
+        if self.current_page < (self.total_tags // self.tags_per_page):
+            next_button = tk.Button(self.pagination_frame, text="Next", command=self.next_page)
+            next_button.pack(side="left", padx=10)
+
+    def prev_page(self):
+        if self.current_page > 0:
+            self.current_page -= 1
+            self.display_tags_page()
+
+    def next_page(self):
+        if (self.current_page + 1) * self.tags_per_page < self.total_tags:
+            self.current_page += 1
+            self.display_tags_page()

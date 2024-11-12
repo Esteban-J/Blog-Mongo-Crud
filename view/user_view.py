@@ -75,9 +75,6 @@ class UserView:
         self.view.main_frame.destroy()
         self.view = BaseView(self.root)
     
-
-
-
 class CreateUserForm(tk.Toplevel):
     def __init__(self, parent, controller, populate_common_widgets):
         super().__init__(parent)
@@ -211,10 +208,10 @@ class ShowUsers(tk.Toplevel):
         self.geometry("600x400")
 
         # Search functionality
-        search_frame = tk.Frame(self, bg="lightblue")
+        search_frame = tk.Frame(self)
         search_frame.pack(pady=5)
 
-        tk.Label(search_frame, text="User ID:").pack(side="left", padx=5)
+        tk.Label(search_frame, text="ID de Usuario:").pack(side="left", padx=5)
         self.user_id_entry = tk.Entry(search_frame)
         self.user_id_entry.pack(side="left", padx=5)
         search_button = tk.Button(search_frame, text="Buscar", command=self.search_user_by_id)
@@ -231,11 +228,15 @@ class ShowUsers(tk.Toplevel):
 
         # Create a frame to hold the user data (this frame will scroll)
         self.scrollable_frame = tk.Frame(self.canvas)
-
+        
         # Create a window in the canvas to hold the scrollable frame
         self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
         self.scrollbar.pack(side="right", fill="y")
-        self.canvas.pack(side="left", fill="both", expand=True)
+        self.canvas.pack(side="top", fill="both", expand=True)
+
+        # Pagination frame (outside the scrollable frame)
+        self.pagination_frame = tk.Frame(self)
+        self.pagination_frame.pack(pady=5)
 
         # Pagination variables
         self.users_per_page = 5  # Number of users per page
@@ -249,82 +250,62 @@ class ShowUsers(tk.Toplevel):
 
     def refresh_data(self):
         """Refresh the user data from the controller and update the display."""
-        # Reset the current page
         self.current_page = 0
-
-        # Retrieve the updated list of users
         self.users = self.controller.get_users()
         self.total_users = len(self.users)
-
-        # Display the updated user list
         self.display_users_page()
 
     def search_user_by_id(self):
-        """Search for a user by ID and display the result."""
         user_id = self.user_id_entry.get().strip()
-        
-        # Clear previous entries in the display frame
+
         for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
 
-        # Find the user with the matching ID
         user = next((user for user in self.users if str(user['_id']) == user_id), None)
 
         if user:
-            # Display the found user's information
             user_text = f"ID de Usuario: {user['_id']}\nNombre: {user['name']}\nEmail: {user['email']}\nArtículos: {user['articles']}\nComentarios: {user['comments']}"
             user_display = tk.Text(self.scrollable_frame, height=4, wrap="word")
             user_display.insert("1.0", user_text)
-            user_display.configure(state="disabled")  # Make the text read-only
+            user_display.configure(state="disabled")
             user_display.pack(pady=5)
         else:
-            # Show message if user not found
-            not_found_label = tk.Label(self.scrollable_frame, text="User not found.", fg="red")
-            not_found_label.pack(pady=5)
+            self.display_users_page()
+            messagebox.showerror("Error", "Usuario no encontrado")
 
-        # Update the scroll region
         self.scrollable_frame.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
     def display_users_page(self):
-        # Clear the previous widgets (if any)
         for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
 
-        # Calculate the range of users for the current page
         start_index = self.current_page * self.users_per_page
         end_index = min(start_index + self.users_per_page, self.total_users)
 
-        # Create text widgets to display users
         for i in range(start_index, end_index):
             user = self.users[i]
             user_text = f"ID de Usuario: {user['_id']}\nNombre: {user['name']}\nEmail: {user['email']}\nArtículos: {user['articles']}\nComentarios: {user['comments']}"
             user_display = tk.Text(self.scrollable_frame, height=6, wrap="word")
             user_display.insert("1.0", user_text)
-            user_display.configure(state="disabled")  # Make the text read-only
-            user_display.pack(pady=5)
+            user_display.configure(state="disabled")
+            user_display.pack(pady=5, fill="both", expand=True)
 
-        # Update the scroll region
         self.scrollable_frame.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
-        # Add pagination controls
         self.create_pagination_buttons()
 
     def create_pagination_buttons(self):
-        # Remove any existing pagination buttons
-        for widget in self.scrollable_frame.winfo_children():
-            if isinstance(widget, tk.Button):
-                widget.destroy()
+        for widget in self.pagination_frame.winfo_children():
+            widget.destroy()
 
-        # Previous page button
         if self.current_page > 0:
-            prev_button = tk.Button(self.scrollable_frame, text="Previous", command=self.prev_page)
+            prev_button = tk.Button(self.pagination_frame, text="Previous", command=self.prev_page)
             prev_button.pack(side="left", padx=10)
 
-        # Next page button
         if self.current_page < (self.total_users // self.users_per_page):
-            next_button = tk.Button(self.scrollable_frame, text="Next", command=self.next_page)
+            next_button = tk.Button(self.pagination_frame, text="Next", command=self.next_page)
             next_button.pack(side="left", padx=10)
 
     def prev_page(self):

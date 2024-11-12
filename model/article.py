@@ -74,5 +74,5 @@ class ArticleModel:
         
         return result.deleted_count > 0
     
-    def get_user(self):
-        return self.article_collection.find()
+    def get_articles(self):
+        return list(self.article_collection.find())

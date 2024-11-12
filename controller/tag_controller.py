@@ -14,28 +14,29 @@ class TagController(BaseController):
         articles = [ObjectId(article) for article in articles if article]
 
         if self.model.create_tag(name, url, articles):
-            print("Tag created successfully with article references!")
-        else:
-            print("Error: Missing required fields for tag creation")
+            print("¡Etiqueta creada exitosamente con referencias de artículos!")
 
     def update_tag(self, id, name, url, articles):
         articles = [ObjectId(article) for article in articles if article]
 
         if self.model.update_tag(id, name, url, articles):
-            print("Tag updated successfully with article references!")
-        else:
-            print("Error: Failed to update tag or tag not found")
+            print("¡Etiqueta creada exitosamente con referencias de artículos!")
 
     def replace_tag(self, id, name, url, articles):
         articles = [ObjectId(article) for article in articles if article]
 
         if self.model.replace_tag(id, name, url, articles):
-            print("Tag replaced successfully with article references!")
-        else:
-            print("Error: Failed to replace tag or tag not found")
+            print("¡Etiqueta creada exitosamente con referencias de artículos!")
 
     def delete_tag(self, id):
         if self.model.delete_tag(id):
-            print("Tag deleted successfully")
+            print("Etiqueta eliminada exitosamente")
+
+    def get_tags(self):
+        tags_list = self.model.get_tags()
+        if tags_list:
+            return tags_list
         else:
-            print("Error: Failed to delete tag or tag not found")
+            print("Error: No se encontraron etiquetas")
+            return []
+

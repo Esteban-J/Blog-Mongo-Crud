@@ -16,7 +16,7 @@ class TagModel:
         self.tag_collection.insert_one(tag_data)
         return True
 
-    def update_tag(self, id, name, url, articles):
+    def update_tag(self, id, name, url, articles_ids):
         if not isinstance(id, ObjectId):
             id = ObjectId(id)
 
@@ -25,7 +25,7 @@ class TagModel:
             return False
 
         name = name if name else tag.get("name")
-        url = url if url else tag.get("email")
+        url = url if url else tag.get("url")
         articles_ids = articles_ids if articles_ids else tag.get("articles", [])
 
         self.tag_collection.update_one(
@@ -57,3 +57,6 @@ class TagModel:
 
         result = self.tag_collection.delete_one({"_id": id})
         return result.deleted_count > 0
+
+    def get_tags(self):
+        return list(self.tag_collection.find())

@@ -52,3 +52,6 @@ class CategoryModel:
             id = ObjectId(id)
         result = self.category_collection.delete_one({"_id": id})
         return result.deleted_count > 0
+    
+    def get_categories(self):
+        return list(self.category_collection.find())

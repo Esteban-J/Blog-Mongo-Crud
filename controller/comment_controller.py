@@ -15,30 +15,31 @@ class CommentController(BaseController):
         articles = [ObjectId(article) for article in articles if article]
 
         if self.model.create_comment(name, url, articles, user_id):
-            print("Comment created successfully with article and user references!")
-        else:
-            print("Error: Missing required fields for comment creation")
+            print("¡Comentario creado exitosamente con referencias de artículo y usuario!")
 
     def update_comment(self, id, name, url, articles, user_id):
         user_id = ObjectId(user_id) if user_id else None
         articles = [ObjectId(article) for article in articles if article]
 
         if self.model.update_comment(id, name, url, articles, user_id):
-            print("Comment updated successfully with article and user references!")
-        else:
-            print("Error: Failed to update comment or comment not found")
+            print("¡Comentario creado exitosamente con referencias de artículo y usuario!")
 
     def replace_comment(self, id, name, url, articles, user_id):
         user_id = ObjectId(user_id) if user_id else None
         articles = [ObjectId(article) for article in articles if article]
 
         if self.model.replace_comment(id, name, url, articles, user_id):
-            print("Comment replaced successfully with article and user references!")
-        else:
-            print("Error: Failed to replace comment or comment not found")
+            print("¡Comentario creado exitosamente con referencias de artículo y usuario!")
+
 
     def delete_comment(self, id):
         if self.model.delete_comment(id):
-            print("Comment deleted successfully")
+            print("Comentario eliminado exitosamente")
+    
+    def get_comments(self):
+        comments_list = self.model.get_comments()
+        if comments_list:
+            return comments_list
         else:
-            print("Error: Failed to delete comment or comment not found")
+            print("Error: No se encontraron comentarios")
+            return []

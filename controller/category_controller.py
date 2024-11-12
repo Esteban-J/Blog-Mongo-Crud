@@ -13,25 +13,27 @@ class CategoryController(BaseController):
         articles = [ObjectId(article) for article in articles if article]
         if self.model.create_category(name, url, articles):
             print("Categoría creada correctamente!")
-        else:
-            print("Error: Datos faltantes para crear la categoría")
 
     def update_category(self, id, name, url, articles):
         articles = [ObjectId(article) for article in articles if article]
         if self.model.update_category(id, name, url, articles):
             print("Categoría actualizada correctamente!")
-        else:
-            print("Error: Datos faltantes para actualizar la categoría")
 
     def replace_category(self, id, name, url, articles):
         articles = [ObjectId(article) for article in articles if article]
         if self.model.replace_category(id, name, url, articles):
             print("Categoría reemplazada correctamente!")
-        else:
-            print("Error: Datos faltantes para reemplazar la categoría")
 
     def delete_category(self, id):
         if self.model.delete_category(id):
             print("Categoría eliminada correctamente!")
         else:
             print("Error al eliminar la categoría")
+    
+    def get_categories(self):
+        categories_list = self.model.get_categories()
+        if categories_list:
+            return categories_list
+        else:
+            print("Error: No se encontraron categorías")
+            return []
